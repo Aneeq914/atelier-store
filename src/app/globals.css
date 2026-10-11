@@ -1,0 +1,505 @@
+@import "tailwindcss";
+
+/* =============================================================================
+   Atelier design system
+   Monochrome, image-led, square-edged. Black and white do the work; imagery
+   carries the colour. Every value below is a token — don't hard-code new ones.
+   ========================================================================== */
+
+/* -----------------------------------------------------------------------------
+   Runtime tokens (can change per breakpoint or per theme scope)
+   -------------------------------------------------------------------------- */
+:root {
+  /* Colour roles */
+  --c-fg: #000;
+  --c-bg: #fff;
+  --c-surface: #f9f9f9; /* secondary panels, announcement bar */
+  --c-well: #fbfbfb; /* product image background */
+  --c-line: rgb(0 0 0 / 0.15); /* hairlines, dividers, field borders */
+  --c-muted: #767676; /* secondary text; 4.5:1 on white */
+  --c-hover: rgb(0 0 0 / 0.06);
+  --c-disabled: #767676;
+  --c-disabled-bg: rgb(118 118 118 / 0.2);
+  --c-error: #c00;
+  --c-success: #063;
+  --c-warning: #994d00;
+
+  /* Layout */
+  --gutter: 1rem; /* page side padding: 16 → 32 → 64 */
+  --header-h: 4rem; /* 64 → 72 */
+  --section-y: 3rem; /* vertical rhythm between page sections */
+
+  /* Responsive type sizes (large roles step up at 1024px) */
+  --title-xl-size: 2rem;
+  --title-xl-lh: 2rem;
+  --title-xxl-size: 2.5rem;
+  --title-xxl-lh: 2.5rem;
+  --display-size: 3.5rem;
+  --display-lh: 3rem;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --gutter: 2rem;
+    --section-y: 4rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --gutter: 4rem;
+    --header-h: 4.5rem;
+    --section-y: 5rem;
+    --title-xl-size: 3rem;
+    --title-xl-lh: 3rem;
+    --title-xxl-size: 4rem;
+    --title-xxl-lh: 4rem;
+    --display-size: 6.5rem;
+    --display-lh: 6rem;
+  }
+}
+
+/* Inverse scope for dark bands (footer, editorial blocks). Not a site-wide
+   dark mode: the store stays white, like a gallery wall. */
+.theme-inverse {
+  --c-fg: #fff;
+  --c-bg: #000;
+  --c-surface: #191919;
+  --c-well: #191919;
+  --c-line: rgb(255 255 255 / 0.5);
+  --c-muted: #a3a3a3;
+  --c-hover: rgb(255 255 255 / 0.1);
+  --c-error: #ec716b;
+  --c-success: #60c96d;
+  --c-warning: #ee692d;
+  background-color: var(--c-bg);
+  color: var(--c-fg);
+}
+
+/* -----------------------------------------------------------------------------
+   Tailwind theme
+   -------------------------------------------------------------------------- */
+@theme {
+  /* Closed palette: only these colours exist as utilities. */
+  --color-*: initial;
+  --color-black: #000;
+  --color-white: #fff;
+  --color-focus: #337eff;
+  --color-backdrop: rgb(0 0 0 / 0.4);
+
+  --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), ui-serif, Georgia, serif;
+
+  /* Square by default. 2px only on fields; full for circular icon buttons. */
+  --radius-*: initial;
+  --radius-xs: 2px;
+
+  --breakpoint-xl: 90rem; /* 1440 */
+  --breakpoint-2xl: 120rem; /* 1920 */
+
+  --shadow-overlay: 0 8px 24px 0 rgb(0 0 0 / 0.1);
+  --blur-glass: 15px;
+  --ease-luxe: cubic-bezier(0.5, 0, 0, 1);
+}
+
+@theme inline {
+  --color-foreground: var(--c-fg);
+  --color-background: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-well: var(--c-well);
+  --color-divider: var(--c-line);
+  --color-muted: var(--c-muted);
+  --color-hover: var(--c-hover);
+  --color-disabled: var(--c-disabled);
+  --color-error: var(--c-error);
+  --color-success: var(--c-success);
+  --color-warning: var(--c-warning);
+
+  --spacing-gutter: var(--gutter);
+  --spacing-header: var(--header-h);
+  --spacing-section: var(--section-y);
+}
+
+/* -----------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--c-line);
+  }
+
+  html {
+    background-color: var(--c-bg);
+    color: var(--c-fg);
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Lock page scroll while a modal (menu drawer) is open. */
+  html:has(dialog[open]:modal) {
+    overflow: hidden;
+  }
+
+  ::selection {
+    background-color: var(--c-fg);
+    color: var(--c-bg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Typography roles — use these instead of raw text-size utilities.
+   Small text is tight and sentence case; titles are uppercase.
+   -------------------------------------------------------------------------- */
+@utility type-micro {
+  /* tags on product tiles ("New", "Limited") */
+  font-size: 0.625rem;
+  line-height: 0.75rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+@utility type-caption {
+  /* product names, breadcrumbs, meta */
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+@utility type-caption-strong {
+  /* prices, active filters */
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+@utility type-body {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+@utility type-body-strong {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+@utility type-lead {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+}
+@utility type-cta {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+@utility type-title-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+@utility type-title-s {
+  font-size: 0.875rem;
+  line-height: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+@utility type-title-m {
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+@utility type-title-l {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+@utility type-title-xl {
+  font-size: var(--title-xl-size);
+  line-height: var(--title-xl-lh);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+@utility type-title-xxl {
+  font-size: var(--title-xxl-size);
+  line-height: var(--title-xxl-lh);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+@utility type-display {
+  /* campaign headlines only; line-height is deliberately below font-size */
+  font-size: var(--display-size);
+  line-height: var(--display-lh);
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+}
+@utility type-wordmark {
+  /* resize with [--wordmark-size:…] rather than text-* */
+  font-family: var(--font-serif);
+  font-size: var(--wordmark-size, 1.75rem);
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* -----------------------------------------------------------------------------
+   Layout primitives
+   -------------------------------------------------------------------------- */
+@utility container-page {
+  width: 100%;
+  max-width: 120rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+@utility container-prose {
+  width: 100%;
+  max-width: 42rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+@utility grid-page {
+  /* 12 columns, 8px gutter */
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: 0.5rem;
+}
+@utility grid-products {
+  /* edge-to-edge tiles split by 1px hairline gaps: 2 → 3 → 4 columns */
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  @media (min-width: 48rem) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  @media (min-width: 64rem) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@utility section {
+  padding-block: var(--section-y);
+}
+@utility scroll-x {
+  /* horizontal rails: sub-category nav, swatches, carousels */
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Media frames for next/image `fill`. Set the fit on the image itself:
+   `object-contain` for clean product cut-outs, `object-cover` for photos. */
+@utility media-product {
+  /* square product frame on the pale well */
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background-color: var(--c-well);
+}
+@utility media-cover {
+  /* editorial frame; give it an aspect ratio or height */
+  position: relative;
+  overflow: hidden;
+  background-color: var(--c-surface);
+}
+
+/* -----------------------------------------------------------------------------
+   Components: buttons, links, fields
+   Utilities still override these (e.g. `btn btn-primary w-full`).
+   -------------------------------------------------------------------------- */
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 1rem 1.5rem;
+    border: 1px solid transparent;
+    border-radius: 0;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition-property: background-color, color, border-color, opacity;
+    transition-duration: 300ms;
+    transition-timing-function: var(--ease-luxe);
+  }
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    background-color: var(--c-disabled-bg);
+    border-color: transparent;
+    color: var(--c-disabled);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .btn-sm {
+    min-height: 2.5rem;
+    padding: 0.75rem 1rem;
+  }
+
+  /* Solid black: the one main action per view (add to bag, checkout). */
+  .btn-primary {
+    background-color: var(--c-fg);
+    color: var(--c-bg);
+  }
+  .btn-primary:hover {
+    background-color: color-mix(in srgb, var(--c-fg) 82%, var(--c-bg));
+  }
+
+  /* Outlined: secondary actions next to a primary. */
+  .btn-secondary {
+    background-color: transparent;
+    border-color: var(--c-fg);
+    color: var(--c-fg);
+  }
+  .btn-secondary:hover {
+    background-color: var(--c-hover);
+  }
+
+  /* White on imagery (hero CTAs over a photo). */
+  .btn-on-image {
+    background-color: #fff;
+    color: #000;
+  }
+  .btn-on-image:hover {
+    background-color: rgb(255 255 255 / 0.85);
+  }
+
+  /* Frosted glass on imagery, for busy or mid-tone photos. */
+  .btn-glass {
+    background-color: rgb(0 0 0 / 0.15);
+    border-color: rgb(255 255 255 / 0.5);
+    color: #fff;
+    -webkit-backdrop-filter: blur(var(--blur-glass));
+    backdrop-filter: blur(var(--blur-glass));
+  }
+  .btn-glass:hover {
+    background-color: rgb(0 0 0 / 0.3);
+  }
+
+  /* Circular icon button (close, carousel arrows). */
+  .btn-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 9999px;
+    background-color: var(--c-fg);
+    color: var(--c-bg);
+    cursor: pointer;
+    transition: opacity 300ms var(--ease-luxe);
+  }
+  .btn-icon:hover {
+    opacity: 0.8;
+  }
+
+  /* Bare icon with a 40px hit area (header: bag, account, search). */
+  .btn-icon-ghost {
+    display: inline-grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  /* Inline text link: always underlined, so it reads as a link without colour. */
+  .link {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+    transition: opacity 300ms var(--ease-luxe);
+  }
+  .link:hover {
+    opacity: 0.6;
+  }
+
+  /* Navigation link: no underline until hover/active. */
+  .link-quiet {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 300ms var(--ease-luxe);
+  }
+  .link-quiet:hover,
+  .link-quiet[aria-current] {
+    text-decoration-color: currentColor;
+  }
+
+  /* Text input / select. 16px text stops iOS zooming on focus. */
+  .field {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius-xs);
+    background-color: transparent;
+    color: var(--c-fg);
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 300;
+    transition: border-color 300ms var(--ease-luxe);
+  }
+  .field::placeholder {
+    color: var(--c-muted);
+  }
+  .field:hover,
+  .field:focus {
+    border-color: var(--c-fg);
+  }
+  .field[aria-invalid="true"] {
+    border-color: var(--c-error);
+  }
+}
