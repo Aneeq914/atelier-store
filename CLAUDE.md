@@ -14,6 +14,7 @@ Atelier Store is an eCommerce app at an early stage. The stack is wired up, and 
 npm run dev            # dev server (Turbopack) on http://localhost:3000
 npm run build          # production build; needs DATABASE_URL set (src/db/index.ts throws without it)
 npm run lint           # ESLint (flat config, eslint-config-next)
+npm test               # node:test via tsx, runs src/**/*.test.ts (single file: npx tsx --test path/to/file.test.ts)
 npx tsc --noEmit       # typecheck (run `npx next typegen` first if `.next/` is missing — LayoutProps/PageProps are generated)
 
 npm run auth:generate  # Better Auth CLI: writes auth tables into src/db/schema/auth.ts
@@ -25,7 +26,7 @@ npm run db:seed        # load the sample catalog (safe to re-run; resets stock t
 
 To browse or edit data, use the Neon console (Tables / SQL Editor), not Drizzle Studio. Studio runs any SQL sent to `localhost:4983` with no auth and `Access-Control-Allow-Origin: *`, so any web page open while it runs can query the database with your `DATABASE_URL` role. Don't add a `db:studio` script back.
 
-There is no test runner set up yet.
+Tests use Node's built-in `node:test` and `node:assert`, run through `tsx` (plain `node --test` can't resolve the extensionless imports). Put them next to the code as `*.test.ts`.
 
 ## Environment
 
@@ -39,7 +40,7 @@ How the pieces connect:
 
 - `src/db/schema/index.ts` exports every table (catalog tables in `catalog.ts`). It feeds Drizzle Kit (`drizzle.config.ts`) and the runtime client (`src/db/index.ts`), and is passed to the Better Auth Drizzle adapter. There are no auth tables yet, so **auth calls fail until `auth:generate` has run, its file is exported from `index.ts`, and a migration is applied**.
 - `src/db/index.ts` exports `db`, built on the **Neon HTTP driver** (`drizzle-orm/neon-http`). That driver does not support interactive/multi-statement transactions. Anything that needs `db.transaction()` (e.g. checkout, stock updates) requires switching to `drizzle-orm/neon-serverless` (WebSocket `Pool`).
-- `src/lib/auth.ts` is the server-side Better Auth instance (Drizzle adapter with `provider: "pg"`, email/password enabled, `nextCookies()` plugin so Server Actions can set auth cookies). Import it only from server code.
+- `src/lib/auth.ts` is the server-side Better Auth instance (Drizzle adapter with `provider: "pg"`, email/password enabled, `nextCookies()` plugin so Server Actions can set auth cookies). Import it only from server code. Its `logger` is `authLogger` (`src/lib/auth-logger.ts`), which writes each log as one JSON line with control characters escaped, because Better Auth logs request values such as a rejected `callbackURL` as-is. Keep it.
 - `src/app/api/auth/[...all]/route.ts` mounts Better Auth via `toNextJsHandler(auth)`; all auth HTTP endpoints live under `/api/auth/*`.
 - `src/lib/auth-client.ts` exports `authClient` (`better-auth/react`) for client components.
 
