@@ -18,3 +18,15 @@ Next.js (App Router) + TypeScript + Tailwind CSS + Better Auth + Drizzle ORM + N
 - `src/lib/auth-client.ts` — Better Auth React client
 - `src/app/api/auth/[...all]/route.ts` — auth route handler
 - `drizzle.config.ts` — Drizzle Kit config
+
+## Authentication rate limiting
+
+The direct `next start` server accepts caller-supplied forwarding headers. Auth
+therefore ignores IP headers and uses Better Auth's shared per-path fallback
+bucket in production (including three sign-in attempts per ten seconds). This
+limit is shared by all clients in each server process; session IPs are not
+recorded. Development retains Better Auth's default disabled limiter.
+
+Before enabling IP-based buckets, configure an ingress that replaces client IP
+headers and prevents direct backend access. Multiple server processes also need
+shared rate-limit storage to enforce a deployment-wide limit.
