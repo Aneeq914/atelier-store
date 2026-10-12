@@ -20,9 +20,10 @@ npm run auth:generate  # Better Auth CLI: writes auth tables into src/db/schema/
 npm run db:generate    # drizzle-kit: create SQL migration in ./drizzle from schema
 npm run db:migrate     # apply migrations to Neon
 npm run db:push        # push schema directly (prototyping only)
-npm run db:studio      # Drizzle Studio
 npm run db:seed        # load the sample catalog (safe to re-run; resets stock to seed values)
 ```
+
+To browse or edit data, use the Neon console (Tables / SQL Editor), not Drizzle Studio. Studio runs any SQL sent to `localhost:4983` with no auth and `Access-Control-Allow-Origin: *`, so any web page open while it runs can query the database with your `DATABASE_URL` role. Don't add a `db:studio` script back.
 
 There is no test runner set up yet.
 
