@@ -4,10 +4,11 @@ import { nextCookies } from "better-auth/next-js";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 import { authLogger } from "@/lib/auth-logger";
+import { databaseSessionRevocation } from "@/lib/session-revocation";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg", schema }),
   emailAndPassword: { enabled: true },
   logger: authLogger,
-  plugins: [nextCookies()],
+  plugins: [databaseSessionRevocation, nextCookies()],
 });
