@@ -11,6 +11,7 @@ import {
   SearchIcon,
   UserIcon,
 } from "@/components/icons";
+import { ACCOUNT_HREF, BAG_HREF, SEARCH_HREF, SIGN_IN_HREF } from "@/lib/routes";
 import { menuLinks } from "@/lib/sample-data";
 
 // Pages whose first section is a full-bleed image the header floats over.
@@ -65,13 +66,13 @@ export function SiteHeader() {
             aria-label="Account and shopping"
             className="-mr-2 flex items-center lg:justify-self-end"
           >
-            <Link href="/bag" aria-label="Shopping bag" className="btn-icon-ghost">
+            <Link href={BAG_HREF} aria-label="Shopping bag" className="btn-icon-ghost">
               <BagIcon />
             </Link>
-            <Link href="/account" aria-label="Account" className="btn-icon-ghost">
+            <Link href={ACCOUNT_HREF} aria-label="Account" className="btn-icon-ghost">
               <UserIcon />
             </Link>
-            <Link href="/search" aria-label="Search" className="btn-icon-ghost">
+            <Link href={SEARCH_HREF} aria-label="Search" className="btn-icon-ghost">
               <SearchIcon />
             </Link>
             <button
@@ -127,7 +128,7 @@ export function SiteHeader() {
           </nav>
 
           <div className="flex flex-col gap-3 border-t px-gutter py-6">
-            <Link href="/account" onClick={closeMenu} className="type-caption link">
+            <Link href={SIGN_IN_HREF} onClick={closeMenu} className="type-caption link">
               Sign in or create an account
             </Link>
             <Link href="/contact" onClick={closeMenu} className="type-caption link">

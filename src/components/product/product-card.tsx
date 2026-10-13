@@ -4,7 +4,13 @@ import type { Product } from "@/db/queries/catalog";
 import { formatPrice } from "@/lib/format";
 import { getStockStatus } from "@/lib/stock";
 
-export function ProductCard({ product }: { product: Product }) {
+type Props = {
+  product: Product;
+  /** Load the image eagerly with high priority (first row above the fold). */
+  eager?: boolean;
+};
+
+export function ProductCard({ product, eager = false }: Props) {
   const [image] = product.images;
   const soldOut = getStockStatus(product.stock) === "sold_out";
   const tag = soldOut ? "Sold out" : product.badge;
@@ -17,6 +23,8 @@ export function ProductCard({ product }: { product: Product }) {
           alt={image.alt}
           fill
           sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+          loading={eager ? "eager" : undefined}
+          fetchPriority={eager ? "high" : undefined}
           className="object-cover transition-transform duration-700 ease-luxe group-hover:scale-[1.03]"
           style={{ objectPosition: image.position }}
         />

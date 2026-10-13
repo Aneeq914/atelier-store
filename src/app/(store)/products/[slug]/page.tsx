@@ -89,7 +89,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
             </div>
 
             <div className="flex flex-col gap-3">
-              <AddToBagButton soldOut={soldOut} />
+              <AddToBagButton productId={product.id} soldOut={soldOut} />
               {soldOut ? (
                 <p className="type-caption text-muted">
                   This piece is currently unavailable.{" "}

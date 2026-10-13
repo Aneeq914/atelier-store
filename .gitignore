@@ -40,3 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Better Auth CLI output, for comparing with src/db/schema/auth.ts (npm run auth:generate)
+auth-schema.generated.ts

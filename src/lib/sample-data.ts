@@ -2,7 +2,7 @@
 // Products and categories live in the database (src/db/queries/catalog.ts).
 // Client components import this file, so it must not import anything from src/db.
 
-import { categoryHref } from "@/lib/routes";
+import { categoryHref, NEW_ARRIVALS_HREF } from "@/lib/routes";
 import { photo, type SampleImage } from "@/lib/sample-images";
 
 export type LinkTile = {
@@ -69,6 +69,111 @@ export const campaign = {
   image: photo("campaign-glass", 18822108, "Woman in black posing against a glass facade", "50% 30%"),
 };
 
+export const newArrivals = {
+  eyebrow: "Just landed",
+  title: "New arrivals",
+  intro: "The latest pieces from the atelier, newest first: leather goods, footwear and finishing touches for the season ahead.",
+  empty: "New pieces are on their way. Check back soon.",
+};
+
+export const search = {
+  eyebrow: "Search",
+  title: "Search",
+  resultsTitle: "Results for",
+  label: "Search products",
+  placeholder: "Search bags, shoes, colours…",
+  sort: "Best match",
+  empty: "Nothing matches your search. Try a colour, a material or a category.",
+  browse: "Browse the collections",
+  suggestions: { eyebrow: "Need inspiration?", title: "New arrivals" },
+};
+
+export const authCopy = {
+  eyebrow: "Your account",
+  signIn: {
+    title: "Sign in",
+    intro: "Sign in to see your account.",
+    submit: "Sign in",
+    pending: "Signing in…",
+    switchPrompt: "New to Atelier?",
+    switchLink: "Create an account",
+  },
+  signUp: {
+    title: "Create an account",
+    intro: "Create an account to keep your details in one place.",
+    submit: "Create account",
+    pending: "Creating account…",
+    passwordHint: "At least 8 characters.",
+    switchPrompt: "Already have an account?",
+    switchLink: "Sign in",
+  },
+  account: {
+    title: "My account",
+    overview: "Overview",
+    details: "Account details",
+    detailsIntro: "Your name is how we greet you. Your email is how you sign in.",
+    editDetails: "Edit details",
+    save: "Save changes",
+    saving: "Saving…",
+    emailNote: "Email changes aren't available yet.",
+    signOut: "Sign out",
+    admin: "Admin",
+    adminBody: "You have admin access to manage the store.",
+    goToAdmin: "Go to admin",
+    shop: { title: "Continue shopping", body: "The latest pieces from the atelier.", link: "Shop new arrivals" },
+  },
+  admin: { title: "Admin", overview: "Overview", backToStore: "View the store" },
+};
+
+export const bagCopy = {
+  eyebrow: "Shopping bag",
+  title: "Your bag",
+  empty: "Your bag is empty.",
+  emptyLink: "Shop new arrivals",
+  summary: "Summary",
+  subtotal: "Subtotal",
+  shipping: "Shipping",
+  shippingValue: "Complimentary",
+  later: "No tax or shipping charges. Payments use a test provider: no real money moves.",
+  continue: "Continue shopping",
+  remove: "Remove",
+  quantity: "Quantity",
+  reduced: (stock: number) => `Only ${stock} left, so we've updated your quantity.`,
+  soldOut: "This piece has sold out. It isn't included in your subtotal.",
+  add: "Add to bag",
+  adding: "Adding…",
+  added: "Added to bag",
+  view: "View bag",
+};
+
+export const checkoutCopy = {
+  checkout: "Checkout",
+  starting: "Starting checkout…",
+  signInToCheckout: "Sign in to check out",
+  reviewBag: "Update the pieces marked above to continue.",
+  cancelled: "Checkout cancelled. Nothing was charged and your bag is just as you left it.",
+  order: {
+    eyebrow: "Order",
+    paidTitle: "Thank you",
+    paidIntro: "Your order is confirmed.",
+    pendingTitle: "Confirming your payment",
+    pendingIntro: "This usually takes a few seconds. Please don't pay again.",
+    closedTitle: "Payment didn't go through",
+    closedIntro: "Nothing was charged. Your pieces are back in stock for you to try again.",
+    failedIntro: "We couldn't confirm this payment. Our client services team will be in touch.",
+    backToBag: "Back to your bag",
+    continue: "Continue shopping",
+    items: "Items",
+    total: "Total",
+  },
+};
+
+export const categoryCollection = {
+  eyebrow: "Shop by category",
+  empty: "Nothing in this category right now. New pieces arrive often.",
+  more: { eyebrow: "Continue browsing", title: "New elsewhere" },
+};
+
 export const spotlight = {
   eyebrow: "In focus",
   productSlug: "soft-pouch",
@@ -90,7 +195,7 @@ export const shippingAndReturns = [
 ];
 
 export const menuLinks = [
-  { label: "New In", href: "/collections/new" },
+  { label: "New In", href: NEW_ARRIVALS_HREF },
   { label: "Women", href: "/collections/women" },
   { label: "Men", href: "/collections/men" },
   { label: "Handbags", href: categoryHref("handbags") },

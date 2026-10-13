@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ProductCard } from "@/components/product/product-card";
+import { ProductGrid } from "@/components/product/product-grid";
 import type { Product } from "@/db/queries/catalog";
 
 type Props = {
@@ -8,10 +8,12 @@ type Props = {
   title: string;
   link?: { label: string; href: string };
   products: Product[];
+  /** Load the first N images eagerly when the section starts above the fold. */
+  eagerCount?: number;
 };
 
 /** Section heading plus an edge-to-edge product grid (home, product page). */
-export function ProductGridSection({ id, eyebrow, title, link, products }: Props) {
+export function ProductGridSection({ id, eyebrow, title, link, products, eagerCount }: Props) {
   return (
     <section aria-labelledby={id} className="pt-section">
       <div className="container-page mb-6 flex items-end justify-between gap-4 lg:mb-8">
@@ -27,13 +29,7 @@ export function ProductGridSection({ id, eyebrow, title, link, products }: Props
           </Link>
         )}
       </div>
-      <ul className="grid-products">
-        {products.map((product) => (
-          <li key={product.slug}>
-            <ProductCard product={product} />
-          </li>
-        ))}
-      </ul>
+      <ProductGrid products={products} eagerCount={eagerCount} />
     </section>
   );
 }
